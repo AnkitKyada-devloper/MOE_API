@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Emergencyleave;
 use App\Models\Leave_attechements;
 use Auth;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Log;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use TheSeer\Tokenizer\Exception;
 
@@ -15,6 +18,7 @@ class emergencyleaveController extends Controller
 
   public function leave(Request $request)
   {
+  
     try{
       $validated = Validator::make($request->all(),[
         'leave_type_id' => 'required|not_in:-- Choose Leave Type --',  
@@ -25,8 +29,16 @@ class emergencyleaveController extends Controller
        ]);
      
      if($validated->fails()){
-      return response()->json(['Error' => 'something went wrong.', 'code' => 404], 404);
- }
+      return response()->json(
+        [
+          'code' => 404,
+          'message' => 'Error',
+          
+        ], 
+        $response['code']
+       );
+      }
+      
       $leave = new Emergencyleave;
       $leave->register_user_id = Auth::user()->id;
       $leave->leave_type_id = $request->leave_type_id; //6<-Emergencyid
@@ -38,10 +50,28 @@ class emergencyleaveController extends Controller
       $leave->paidLeaves = $request->paidLeaves;
       $leave->lost_of_pay = $request->lost_of_pay;
       $leave->save();
-      return response()->json(['message' => 'Success', 'code' => 200], 200);
+
+      $encrypted = Crypt::encryptString($leave->id);
+    
+      return response()->json(
+        [
+          'code' => 200,
+          'message' => 'Success',
+          'data' => ['id'=>$encrypted ],
+
+        ], 200
+       // $response['code']
+      );
   }
     catch (Exception $e) {
-      return response()->json(['Error' => 'something went wrong.', 'code' => 500], 500);
+      return response()->json(
+        [
+          'code' => 500,
+          'message' => 'Error',
+          
+        ],  500
+        // $response['code']
+       );
   }
   }
 
@@ -54,29 +84,68 @@ class emergencyleaveController extends Controller
             'upload_document.*' => 'required|mimes:png,jpg,pdf,docx,excel,txt|max:2048'
           ]);
    if($validated->fails()){
-        return response()->json(['Error' => 'something went wrong.', 'code' => 404], 404);
+       return response()->json(
+          [
+            'code' => 404,
+            'message' => 'Error',
+            
+          ], 404
+          // $response['code']
+         );
   }
+ 
+
+  
+
+        $upload_document = [];
+        $files = $request->upload_document;
+        
+        $leave_id=$request->leave_id;
+        $decrypted=Crypt::decryptString($leave_id);
+
+        $user_id=Auth::user()->id;
+        $path = "reports/";
+        $slash = "/";
+
+       $url =  $path.$user_id.$slash.$decrypted;
      
+        // echo $url;
+        // die;
+
+        foreach ($files as $file) {
+        
+          
           $leave1 = new Leave_attechements;
-          $leave1->leave_id = Auth::user()->id;
+          $leave1->leave_id =$decrypted;
           $leave1->attechement_type_id = $request->attechement_type_id;
-
-          $upload_document = [];
-          $files = $request->upload_document;
-
-          foreach ($files as $file) {
-                $data = $file->getClientOriginalName();
-                $filename = time() . '_' . $data;
-                $file->move('public/reports/', $filename);
-                $upload_document[] = $filename;
-                $leave1->upload_document = implode("\n", $upload_document);
+          
+          $data = $file->getClientOriginalName();
+          $filename = time() . '_' . $data;
+          $file->move($url,$filename);
+          $leave1->upload_document = $url.$filename;
+          
+          $leave1->save();
+        }
+        return response()->json(
+          [
+            'code' => 200,
+            'message' => "Success",
+            
+          ], 200
+          // $response['code']
+        );
+            
+        }
+          catch (Exception $e) {
+            return response()->json(
+              [
+                'code' => 500,
+                'message' => 'Error',
                 
-                $leave1->save();
-  }
-      return response()->json(['message' => 'Success', 'code' => 200], 200);
-  }
-    catch (Exception $e) {
-       return response()->json(['Error' => 'something went wrong.', 'code' => 500], 500);
-  }
-  }
-  }
+              ], 500
+              // $response['code']
+             );
+        }
+        }
+        
+        }

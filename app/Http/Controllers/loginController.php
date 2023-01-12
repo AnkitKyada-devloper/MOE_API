@@ -25,10 +25,19 @@ class loginController extends Controller
                 'body' => 'Dear User,Your Required pin :' . $pin
             ];
             Mail::to($data['email'])->send(new sendmail($maildetails));
-            return response()->json(["code" => 200, "message" => 'Required pin sent to your email'], 200);
+            return response()->json(
+                [
+                  'code' => 200,
+                  'message' => "Success",
+                  
+                ], 200);
         } else {
-            return response()->json(["code" => 404, "message" => 'Your email is not valid, Go to login'], 404);
-
+            return response()->json(
+                [
+                  'code' => 404,
+                  'message' => 'Error',
+                  
+                ], 404);
         }
     }
     public function verifypin(Request $request)
@@ -51,9 +60,14 @@ class loginController extends Controller
                 'access_token' => $tokenResult->accessToken
             ]);
              } else {
-                 return response()->json(['message' => 'Your email&pin is incorrect ',"code" => 404,],404);
-             }
+                return response()->json(
+                    [
+                      'code' => 404,
+                      'message' => 'Error',
+                      
+                    ], 404);
     }
+}
         public function update(Request $request,$id)
         { 
         $table = Login::find($id);
@@ -62,6 +76,7 @@ class loginController extends Controller
         $table->save();
         return response()->json(["code" => 200,'message' => 'Successfully update'], 200);
         }
+        
             
         }
     
