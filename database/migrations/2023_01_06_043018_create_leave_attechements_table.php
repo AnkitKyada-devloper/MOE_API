@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateloginTable extends Migration
+class CreateLeaveAttechementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateloginTable extends Migration
      */
     public function up()
     {
-        Schema::create('login', function (Blueprint $table) {
+        Schema::create('leave_attechements', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
-            $table->int('pin');
+            $table->integer('leave_id');
+            $table->integer('attechement_type_id');
+            $table->string('upload_document');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateloginTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('login');
+        Schema::dropIfExists('leave_attechements');
     }
 }

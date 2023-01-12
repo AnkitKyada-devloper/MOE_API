@@ -8,17 +8,20 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Login extends Model
+class Login extends Authenticatable
 {
     use HasFactory;
-    use HasApiTokens;
+    use HasApiTokens; 
 
 
-    protected $table = "login";
-    protected $primarykey = "id";
+    protected $table = "register_users";
+    protected $primaryKey = "id";
     protected $fillable = [
+     
         'email',
-        'pin'
+        'pin',
+        'is_twostep_active',
+        'secret_key'
     ];
 
 }
