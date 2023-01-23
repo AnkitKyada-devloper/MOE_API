@@ -34,4 +34,3 @@ Route::post('verifylogin',[loginController::class,'verifypin']);
 Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
 Route::post('upload_document',[emergencyleaveController::class,'Leave_attechements']);
 Route::post('updatedetailes/{id}',[loginController::class,'update']);
-// Route::get('abc',[loginController::class,'abc']);
