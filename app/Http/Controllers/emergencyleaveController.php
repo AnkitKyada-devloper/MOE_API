@@ -20,11 +20,12 @@ class emergencyleaveController extends Controller
   {
   
     try{
-      $validated = Validator::make($request->all(),[
+      $validated = Validator::make($request->all(),
+      [
         'leave_type_id' => 'required|not_in:-- Choose Leave Type --',  
          'reason' => 'required|min:3|max:100',
         'fromDate1' => 'required',
-        'toDate1' => 'required|after:fromDate1',
+        'toDate1' => 'required|after_or_equal:fromDate1',
         'totalNoOfDays'=>'required',
        ]);
      
@@ -33,9 +34,8 @@ class emergencyleaveController extends Controller
         [
           'code' => 404,
           'message' => 'Error',
-          
         ], 
-        $response['code']
+      
        );
       }
       
@@ -60,7 +60,7 @@ class emergencyleaveController extends Controller
           'data' => ['id'=>$encrypted ],
 
         ], 200
-       // $response['code']
+      
       );
   }
     catch (Exception $e) {
@@ -70,7 +70,7 @@ class emergencyleaveController extends Controller
           'message' => 'Error',
           
         ],  500
-        // $response['code']
+        
        );
   }
   }
@@ -90,13 +90,9 @@ class emergencyleaveController extends Controller
             'message' => 'Error',
             
           ], 404
-          // $response['code']
          );
   }
  
-
-  
-
         $upload_document = [];
         $files = $request->upload_document;
         
@@ -108,13 +104,9 @@ class emergencyleaveController extends Controller
         $slash = "/";
 
        $url =  $path.$user_id.$slash.$decrypted;
-     
-        // echo $url;
-        // die;
 
         foreach ($files as $file) {
         
-          
           $leave1 = new Leave_attechements;
           $leave1->leave_id =$decrypted;
           $leave1->attechement_type_id = $request->attechement_type_id;
@@ -132,7 +124,7 @@ class emergencyleaveController extends Controller
             'message' => "Success",
             
           ], 200
-          // $response['code']
+         
         );
             
         }
@@ -143,7 +135,7 @@ class emergencyleaveController extends Controller
                 'message' => 'Error',
                 
               ], 500
-              // $response['code']
+              
              );
         }
         }

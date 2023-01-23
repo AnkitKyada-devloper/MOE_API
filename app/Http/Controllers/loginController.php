@@ -35,7 +35,7 @@ class loginController extends Controller
             return response()->json(
                 [
                   'code' => 404,
-                  'message' => 'Error',
+                  'message' => 'Check Your Email',
                   
                 ], 404);
         }
@@ -63,11 +63,11 @@ class loginController extends Controller
                 return response()->json(
                     [
                       'code' => 404,
-                      'message' => 'Error',
+                      'message' => 'Check Your Email & Pin',
                       
                     ], 404);
-    }
-}
+        }
+        }
         public function update(Request $request,$id)
         { 
         $table = Login::find($id);
@@ -76,8 +76,6 @@ class loginController extends Controller
         $table->save();
         return response()->json(["code" => 200,'message' => 'Successfully update'], 200);
         }
-        
-            
-        }
+}
     
     
