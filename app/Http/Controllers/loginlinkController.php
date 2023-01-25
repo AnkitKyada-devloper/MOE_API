@@ -21,7 +21,7 @@ class loginlinkController extends Controller
                     'email' => 'required|email|exists:register_users,email',
                 ]
             );
-
+//k
             if ($validated->fails()) {
                 return response()->json(
                     [
