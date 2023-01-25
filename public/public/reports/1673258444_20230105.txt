@@ -1,0 +1,11 @@
+
+-cs :Creaet controller and Seeder :-
+php artisan make:model Configurations -cs  
+php artisan make:model Users -cs
+php artisan make:model Roles -cs
+
+
+php artisan db:seed --class=ConfigurationsSeeder ,
+php artisan db:seed --class=UsersSeeder ,
+php artisan db:seed --class=RolesSeeder ,
+	 	 	 	

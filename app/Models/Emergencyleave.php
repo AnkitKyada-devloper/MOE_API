@@ -3,20 +3,30 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Emergencyleave extends Model
+
+class Emergencyleave extends Authenticatable
 {
     use HasFactory;
+   use HasApiTokens;
 
-    protected $table = "emergencyleave";
-    protected $primarykey = "id";
+    protected $table = "emergencyleaves";
+    protected $primaryKey = "id";
     protected $fillable = [
-        'leave_type',
+        'register_user_id',
+        'leave_type_id',
         'reason',
-        'start_date',
-        'end_date',
-        'upload_document'
+        'fromDate1',
+        'toDate1',
+        'totalNoOfDays',
+        'pendingLeaves',
+        'paidLeaves',
+        'lost_of_pay'
 ];
 
 }

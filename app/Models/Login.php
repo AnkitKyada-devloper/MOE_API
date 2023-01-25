@@ -1,24 +1,28 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Auth\Middleware\Authenticate;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Login extends Model
+class Login extends Authenticatable
 {
     use HasFactory;
-    use HasApiTokens;
+    use HasApiTokens; 
 
 
-    protected $table = "login";
-    protected $primarykey = "id";
+    protected $table = "register_users";
+    protected $primaryKey = "id";
     protected $fillable = [
+        'id',
         'email',
-        'pin'
+        'pin',
+        'mail_link',
+        'is_twostep_active',
+        'secret_key'
     ];
 
 }

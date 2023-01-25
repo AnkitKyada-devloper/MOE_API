@@ -1,0 +1,17 @@
+<tr>
+             <!-- @foreach($students as $student)
+               
+                <td>{{$student->FirstName}}</td>
+                <td>{{$student->LastName}}</td>
+                <td>{{$student->Email}}</td> 
+                <td>{{$student->Photo}}</td>
+                <td>{{$student->Roles}}</td>
+
+
+           <td> -->
+                <img src="{{asset('public/'.$emp->Photo)}}" width="60" height="50" >
+                  <a href="{{route('emp.delete',['id' =>$emp->id])}}"><button class="btn btn-light btn-lg px-5">delete</button></a>
+                  <a href="{{route('emp.edit',['id' =>$emp->id])}}"><button class="btn btn-light btn-lg px-5s">Edit</button></a>
+                </td>
+    </tr> 
+            <!-- @endforeach -->

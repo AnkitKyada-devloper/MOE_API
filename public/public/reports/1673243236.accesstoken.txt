@@ -1,0 +1,10 @@
+// $person = $req->person();
+        // $tokenResult = $person->createToken('Access Token');
+        // $token = $tokenResult->token;
+        // $token->expires_at = Carbon::now()->addWeeks(1);
+        // $token->save();
+
+return respones()->json(['data'=>[
+'access_token' => $tokenResult->accesszToken,
+'expiers_at' =>Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
+]]);

@@ -2,10 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Login;
-use App\Models\Emergencyleave;
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\emergencyleaveController;
+use App\Http\Controllers\loginlinkController;
+
+
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +22,18 @@ use App\Http\Controllers\emergencyleaveController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::post('requestlogin',[loginController::class,'requestpin']);
 Route::post('verifylogin',[loginController::class,'verifypin']);
- Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
+Route::post('requestloginlink',[loginlinkController::class,'link']);
+Route::post('verifyloginlink',[loginlinkController::class,'verifylink']);
+
+
+Route::middleware('auth:api')->group(function(){
+Route::post('upload_document',[emergencyleaveController::class,'Leave_attechements']);  
+Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
+Route::post('updatedetailes/{id}',[loginController::class,'update']);
+
+});
+
+
