@@ -14,13 +14,18 @@ class loginController extends Controller
     public function requestpin(Request $request)
     {
         $pin = rand(1000, 9999);
+        $pin = rand(1000, 9999);
         $device = Login::where('email', '=', $request->email)->update(['pin' => $pin]);
+
 
         $data = array(
             'email' => $request->email
         );
         
         if ($device) {
+            $maildetails = [
+                'Subject' => 'Verify Your Login',
+                'body' => 'Dear User,Your Required pin :' . $pin
             $maildetails = [
                 'Subject' => 'Verify Your Login',
                 'body' => 'Dear User,Your Required pin :' . $pin

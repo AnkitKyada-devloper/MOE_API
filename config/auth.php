@@ -16,6 +16,10 @@ return [
     'defaults' => [
         'guard' => 'api',
         'passwords' => 'Login',
+<<<<<<< HEAD
+=======
+        // 'passwords'=>'Emergencyleave'
+>>>>>>> dbacf7c1959c68835a15309530302108eabb3af9
     ],
 
     /*
@@ -39,10 +43,18 @@ return [
         'web' => [
             'driver' => 'passport',
             'provider' => 'Login',
+<<<<<<< HEAD
+=======
+            // 'provider1'=>'Emergencyleave'
+>>>>>>> dbacf7c1959c68835a15309530302108eabb3af9
         ],
         'api' => [
             'driver' => 'passport', // set this to passport
             'provider' => 'Login',
+<<<<<<< HEAD
+=======
+            // 'provider1'=>'Emergencyleave',
+>>>>>>> dbacf7c1959c68835a15309530302108eabb3af9
             
             'hash' => false,
         ],
@@ -69,8 +81,17 @@ return [
         'Login' => [
             'driver' => 'eloquent',
             'model' => App\Models\Login::class,
+<<<<<<< HEAD
+=======
+           
+>>>>>>> dbacf7c1959c68835a15309530302108eabb3af9
         ],
 
+        // 'Emergencyleave' => [
+        //     'driver' => 'eloquent',
+            
+        //     'model' =>App\Models\Emergencyleave::class
+        // ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -99,6 +120,13 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        // 'Emergencyleave' => [
+        //     'provider' => 'Emergencyleave',
+        //     'table' => 'password_resets',
+        //     'expire' => 60,
+        //     'throttle' => 60,
+        // ],
+        
     ],
 
     /*
