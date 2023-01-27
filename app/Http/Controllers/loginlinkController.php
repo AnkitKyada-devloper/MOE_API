@@ -14,6 +14,7 @@ class loginlinkController extends Controller
 {
     public function link(Request $request)
     {
+    
         try {
             $validated = Validator::make(
                 $request->all(),
@@ -21,7 +22,7 @@ class loginlinkController extends Controller
                     'email' => 'required|email|exists:register_users,email',
                 ]
             );
-//k
+
             if ($validated->fails()) {
                 return response()->json(
                     [
@@ -31,12 +32,13 @@ class loginlinkController extends Controller
                     400
                 );
             }
+         
             $mail_link = Str::random(100);
             $user = loginlink::where('email', $request->email)->first();
 
             if ($user) {
                 $user->update(['mail_link' => $mail_link]);
-                $url = "https://myopeneyess.com/token?" . $mail_link;
+                $url = "https://mycompany.com/token?" . $mail_link;
 
                 $maildetails = [
                     'Subject' => 'Verify Your Login',
@@ -76,23 +78,31 @@ class loginlinkController extends Controller
     public function verifylink(Request $request)
     {
         $mail_link = $request->mail_link;
-        if ($mail_link) {
-            $user = loginlink::where('email', '=', $request->email)->where('mail_link', '=', $request->mail_link)->first();
+        if ($mail_link != null) {
+            $userlink = loginlink::where('email', '=', $request->email)->where('mail_link', '=', $request->mail_link)->first();
             if ($user) {
                 $user->update(['mail_link' => null]);
-                $tokenResult = $user->createToken('Access Token');
+                $tokenResult = $userlink->createToken('Access Token');
                 return response()->json([
                     'message' => 'email is correct ',
                     'code' => 200,
                     'access_token' => $tokenResult->accessToken
                 ]);
-            } 
+            } else {
+                return response()->json(
+                    [
+                        'code' => 404,
+                        'message' => ' Your mail is invalid'
+                    ],
+                    404
+                );
+            }
         }
         else {
             return response()->json(
                 [
                     'code' => 404,
-                    'message' => 'link Cannot be null'
+                    'message' => 'Link Cannot be null'
 
                 ],
                 404

@@ -18,26 +18,31 @@ class emergencyleaveController extends Controller
 
   public function leave(Request $request)
   {
-
-    try {
+  
+    try{
+      
       $validated = Validator::make($request->all(),
+      [
+        'leave_type_id' => 'required|not_in:-- Choose Leave Type --',  
+         'reason' => 'required|min:3|max:100',
+        'fromDate1' => 'required',
+        'toDate1' => 'required|after_or_equal:fromDate1',
+        'totalNoOfDays'=>'required',
+        //  'pendingLeaves'=>'nullable',
+        //  'paidLeaves'=>'nullable',
+        //  'lost_of_pay'=>'nullable'
+       ]);
+     
+     if($validated->fails()){
+      return response()->json(
         [
-          'leave_type_id' => 'required|not_in:-- Choose Leave Type --',
-          'reason' => 'required|min:3|max:100',
-          'fromDate1' => 'required',
-          'toDate1' => 'required|after_or_equal:fromDate1',
-          'totalNoOfDays' => 'required',
-        ]
-      );
-
-      if ($validated->fails()) {
-        return response()->json(
-          [
-            'code' => 404,
-            'message' => $validated->errors()
-          ],400);
+          'code' => 404,
+          'message' => 'Error',
+        ], 
+      
+       );
       }
-
+      
       $leave = new Emergencyleave;
       $leave->register_user_id = Auth::user()->id;
       $leave->leave_type_id = $request->leave_type_id; //6<-Emergencyid
@@ -51,78 +56,93 @@ class emergencyleaveController extends Controller
       $leave->save();
 
       $encrypted = Crypt::encryptString($leave->id);
-
+    
       return response()->json(
         [
           'code' => 200,
           'message' => 'Success',
-          'data' => ['id' => $encrypted]
-        ],200);
+          'data' => ['id'=>$encrypted ],
 
-    } catch (Exception $e) {
+        ], 200
+      
+      );
+  }
+    catch (Exception $e) {
       return response()->json(
         [
           'code' => 500,
           'message' => 'Error'
-
-        ],500);
-    }
+          
+        ],  500
+        
+       );
+  }
   }
 
-
-  public function Leave_attechements(Request $request)
-  {
-    try {
-      $validated = Validator::make($request->all(), [
-        'attechement_type_id' => 'required',
-        'upload_document.*' => 'required|mimes:png,jpg,pdf,docx,excel,txt|max:2048'
-      ]);
-
-      if ($validated->fails()) {
-        return response()->json(
+  
+  public function  Leave_attechements(Request $request)
+    {
+    try{
+        $validated = Validator::make($request->all(),[
+          'attechement_type_id'=>'required',
+            'upload_document.*' => 'required|mimes:png,jpg,pdf,docx,excel,txt|max:2048'
+          ]);
+   if($validated->fails()){
+       return response()->json(
           [
             'code' => 404,
-            'message' => $validated->errors()
-
-          ],404);
-      }
-
-      $upload_document = [];
-      $files = $request->upload_document;
-
-      $leave_id = $request->leave_id;
-      $decrypted = Crypt::decryptString($leave_id);
-
-      $user_id = Auth::user()->id;
-      $path = "reports/";
-      $slash = "/";
-
-      $url = $path . $user_id . $slash . $decrypted;
-
-      foreach ($files as $file) {
-
-        $leave1 = new Leave_attechements;
-        $leave1->leave_id = $decrypted;
-        $leave1->attechement_type_id = $request->attechement_type_id;
-        $data = $file->getClientOriginalName();
-        $filename = time() . '_' . $data;
-        $file->move($url, $filename);
-        $leave1->upload_document = $url . $filename;
-        $leave1->save();
-      }
-      return response()->json(
-        [
-          'code' => 200,
-          'message' => "Success"
-        ],200);
-
-    } catch (Exception $e) {
-      return response()->json(
-        [
-          'code' => 500,
-          'message' => 'Error'
-        ],500);
-    }
+            'message' => 'Error',
+            
+          ], 404
+         );
   }
+ 
+        $upload_document = [];
+        $files = $request->upload_document;
+        
+        $leave_id=$request->leave_id;
+        $decrypted=Crypt::decryptString($leave_id);
 
-}
+        $user_id=Auth::user()->id;
+        $path = "reports/";
+        $slash = "/";
+
+       $url =  $path.$user_id.$slash.$decrypted;
+
+        foreach ($files as $file) {
+        
+          $leave1 = new Leave_attechements;
+          $leave1->leave_id =$decrypted;
+          $leave1->attechement_type_id = $request->attechement_type_id;
+          
+          $data = $file->getClientOriginalName();
+          $filename = time() . '_' . $data;
+          $file->move($url,$filename);
+          $leave1->upload_document = $url.$filename;
+          
+          $leave1->save();
+        }
+        return response()->json(
+          [
+            'code' => 200,
+            'message' => "Success",
+            
+          ], 200
+         
+        );
+            
+        }
+          catch (Exception $e) {
+            return response()->json(
+              [
+                'code' => 500,
+                'message' => 'Error',
+                
+              ], 500
+              
+             );
+        }
+        }
+        
+        } 
+
