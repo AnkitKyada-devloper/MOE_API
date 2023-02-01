@@ -29,7 +29,7 @@ Route::post('updatedetailes/{id}',[loginController::class,'update']);
 Route::post('requestloginlink',[loginlinkController::class,'link']);
 Route::post('verifyloginlink',[loginlinkController::class,'verifylink']);
 
-
+//
 
 Route::group(['middleware' => ['emergencyleave']],function(){
 Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
