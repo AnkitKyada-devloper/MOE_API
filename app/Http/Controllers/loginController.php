@@ -14,7 +14,6 @@ class loginController extends Controller
     public function requestpin(Request $request)
     {
         $pin = rand(1000, 9999);
-        $pin = rand(1000, 9999);
         $device = Login::where('email', '=', $request->email)->update(['pin' => $pin]);
         
         $data = array(
@@ -27,22 +26,10 @@ class loginController extends Controller
                 'body' => 'Dear User,Your Required pin :' . $pin
             ];
             Mail::to($data['email'])->send(new sendmail($maildetails));
-            return response()->json(
-                [
-                    'code' => 200,
-                    'message' => "Success"
-                ],
-                200
-            );
+            return response()->json(['code' => 200,'message' => "Success"],200);
 
         } else {
-            return response()->json(
-                [
-                    'code' => 404,
-                    'message' => 'Check Your Email'
-                ],
-                404
-            );
+            return response()->json(['code' => 404,'message' => 'Check Your Email'],404);
         }
     }
     public function verifypin(Request $request)
@@ -51,14 +38,7 @@ class loginController extends Controller
         if ($pin != null) {
             $user = Login::where('email', '=', $request->email)->where('pin', '=', $pin)->first();
         } else {
-            return response()->json(
-                [
-                    'code' => 404,
-                    'message' => 'Pin Cannot be null'
-
-                ],
-                404
-            );
+            return response()->json(['code' => 404,'message' => 'Pin Cannot be null'],404);
         }
         $data = DB::table('register_users')->select("is_twostep_active", "secret_key")->where("email", "=", $request->email)->get();
         $data1 = json_decode($data);
@@ -77,14 +57,7 @@ class loginController extends Controller
                 'access_token' => $tokenResult->accessToken
             ]);
         } else {
-            return response()->json(
-                [
-                    'code' => 404,
-                    'message' => 'Check Your Email & Pin'
-
-                ],
-                404
-            );
+            return response()->json(['code' => 404,'message' => 'Check Your Email & Pin'],404);
         }
     }
     public function update(Request $request, $id)
@@ -93,6 +66,6 @@ class loginController extends Controller
         $table->secret_key = $request->secret_key;
         $table->is_twostep_active = $request->is_twostep_active;
         $table->save();
-        return response()->json(["code" => 200, 'message' => 'Successfully update'], 200);
+        return response()->json(["code" => 200, 'message' => 'Successfully Update Data'], 200);
     }
 }

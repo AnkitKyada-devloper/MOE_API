@@ -17,14 +17,7 @@ class emergencyleave
     public function handle(Request $request, Closure $next)
     {
       if($request->bearerToken() == null){
-        return response()->json(
-            [
-                'code' => 500,
-                'message' => 'Unauthorized Person'
-
-            ],
-          500
-        );
+        return response()->json(['code' => 500,'message' => 'Error'], 500);
     }
         return $next($request);
     }

@@ -18,6 +18,8 @@ class CreateLeaveAttechementsTable extends Migration
             $table->integer('leave_id');
             $table->integer('attechement_type_id');
             $table->string('upload_document');
+            $table->string('location_latitude');
+            $table->string('location_longitude');
             $table->timestamps();
         });
     }

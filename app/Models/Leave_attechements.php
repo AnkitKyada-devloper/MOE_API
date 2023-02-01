@@ -20,5 +20,7 @@ class Leave_attechements extends Authenticatable
         // 'leave_id',
         'attechement_type_id',
         'upload_document ',
+        'location_latitude',
+        'location_longitude'
        ];
 }
