@@ -24,7 +24,8 @@ class Login extends Authenticatable
         'pin',
         'mail_link',
         'is_twostep_active',
-        'secret_key'
+        'secret_key',
+        'otp_expires_time'
     ];
 
 }

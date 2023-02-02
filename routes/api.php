@@ -26,10 +26,10 @@ use App\Http\Controllers\loginlinkController;
 Route::post('requestlogin',[loginController::class,'requestpin']);
 Route::post('verifylogin',[loginController::class,'verifypin']);
 Route::post('updatedetailes/{id}',[loginController::class,'update']);
-Route::post('requestloginlink',[loginlinkController::class,'link']);
+Route::post('requestloginlink',[loginlinkController::class,'requestlink']);
 Route::post('verifyloginlink',[loginlinkController::class,'verifylink']);
 
-//
+
 
 Route::group(['middleware' => ['emergencyleave']],function(){
 Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
