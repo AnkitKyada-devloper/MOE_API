@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Mail\sendmail;
+use App\Models\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use TheSeer\Tokenizer\Exception;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Login;
-use TheSeer\Tokenizer\Exception;
+
 
 
 class loginController extends Controller
@@ -20,10 +19,8 @@ class loginController extends Controller
     {
         try {
             $pin = rand(1000, 9999);
-
-            $otp_expires_time = Carbon::now()->addSeconds(300);
-            $device = Login::where('email', '=', $request->email)->update(['pin' => $pin, 'otp_expires_time' => $otp_expires_time]);
-
+            $pin_expires_time = Carbon::now()->addSeconds(300);
+            $device = Login::where('email', '=', $request->email)->update(['pin' => $pin, 'pin_expires_time' => $pin_expires_time]);
             $data = array(
                 'email' => $request->email
             );
@@ -33,35 +30,35 @@ class loginController extends Controller
                     'Subject' => 'Verify Your Login',
                     'body' => 'Dear User,Your Required pin :' . $pin
                 ];
+
                 Mail::to($data['email'])->send(new sendmail($maildetails));
-                return response()->json(['code' => 200, 'message' => "Success", 'otp_expires_time' => $otp_expires_time], 200);
+                return Helper::success('Send Mail');
             } else {
-                return response()->json(['code' => 404, 'message' => 'Check Your Email'], 404);
+                return Helper::error('Mail is Incorrect');
             }
         } catch (Exception $e) {
-            return response()->json(['code' => 500, 'message' => 'Error'], 500);
+            return Helper::catch();
         }
     }
     public function verifypin(Request $request)
     {
         try {
-            $date = Carbon::now();
-            $time = Login::where('email', '=', $request->email)->where('otp_expires_time', '>', $date)->first();
+            $carbon = Carbon::now();
+            $time = Login::where('email', '=', $request->email)->where('pin_expires_time', '>', $carbon)->first();
             if ($time) {
                 $pin = $request->pin;
                 if ($pin != null) {
                     $user = Login::where('email', '=', $request->email)->where('pin', '=', $pin)->first();
                 } else {
-                    return response()->json(['code' => 404, 'message' => 'Pin Cannot be null'], 404);
+                    return Helper::error('Pin can not be null');
                 }
 
-                $datas = Login::select("is_twostep_active", "secret_key")->where("email", "=", $request->email)->get();
-                
-                foreach($datas as $data)
-            {
-                $is_twostep_active = $data['is_twostep_active'];
-                $secret_key = $data['secret_key'];
-            }
+                $datas = Login::select('is_twostep_active', 'secret_key')->where('email', '=', $request->email)->get();
+
+                foreach ($datas as $data) {
+                    $is_twostep_active = $data['is_twostep_active'];
+                    $secret_key = $data['secret_key'];
+                }
 
                 if ($user) {
                     $verify = Login::where('email', '=', $request->email)->update(['pin' => null]);
@@ -73,18 +70,18 @@ class loginController extends Controller
                         'is_twostep_active' => $is_twostep_active,
                         'secret_key' => $secret_key,
                         'access_token' => $tokenResult->accessToken
+                        
                     ]);
                 } else {
-                    return response()->json(['code' => 404, 'message' => 'Check Your Email & Pin'], 404);
+                    return Helper::error('Check your email & pin');
                 }
             } else {
-                return response()->json(['code' => 404, 'message' => 'Pin is Expired'], 404);
+                return Helper::error('Pin Expired');
             }
         } catch (Exception $e) {
-            return response()->json(['code' => 500, 'message' => 'Error'], 500);
+            return Helper::catch();
         }
     }
-
     public function update(Request $request, $id)
     {
         try {
@@ -92,9 +89,9 @@ class loginController extends Controller
             $table->secret_key = $request->secret_key;
             $table->is_twostep_active = $request->is_twostep_active;
             $table->save();
-            return response()->json(["code" => 200, 'message' => 'Successfully Update Data'], 200);
+            return Helper::success('Update data');
         } catch (Exception $e) {
-            return response()->json(['code' => 500, 'message' => 'Error'], 500);
+            return Helper::catch();
         }
     }
 }

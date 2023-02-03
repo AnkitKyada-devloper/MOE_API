@@ -27,7 +27,7 @@ class CreateRegisterUsersTable extends Migration
             $table->string('mail_link',255);
             $table->string('secret_key',250)->default(0);
             $table->tinyInteger('is_twostep_active')->default(0);
-            $table->timestamp('otp_expires_time');
+            $table->timestamp('pin_expires_time');
             $table->timestamps();
         });
     }

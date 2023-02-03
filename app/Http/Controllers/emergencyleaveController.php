@@ -1,16 +1,15 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use App\Models\Emergencyleave;
 use App\Models\Leave_attechements;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Validator;
 use TheSeer\Tokenizer\Exception;
-
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class emergencyleaveController extends Controller
 {
@@ -35,9 +34,8 @@ class emergencyleaveController extends Controller
             );
 
             if ($validated->fails()) {
-                return response()->json(['code' => 422, 'message' => 'Error'], 422);
+                return Helper::validated($validated);
             }
-
             $leave = new Emergencyleave;
             $leave->register_user_id = Auth::user()->id;
             $leave->leave_type_id = $request->leave_type_id; //6<-Emergencyid
@@ -51,9 +49,9 @@ class emergencyleaveController extends Controller
             $leave->save();
 
             $encrypted = Crypt::encryptString($leave->id);
-            return response()->json(['code' => 200, 'message' => 'Successfully..'], 200);
+            return Helper::success('Insert Data');
         } catch (Exception $e) {
-            return response()->json(['code' => 500, 'message' => 'Error'], 500);
+            return Helper::catch ();
         }
     }
     public function Leave_attechements(Request $request)
@@ -67,7 +65,7 @@ class emergencyleaveController extends Controller
             ]);
 
             if ($validated->fails()) {
-                return response()->json(['code' => 422, 'message' => 'Error'], 422);
+                return Helper::validated($validated);
             }
 
             $upload_document = [];
@@ -94,9 +92,9 @@ class emergencyleaveController extends Controller
                 $leave1->upload_document = $url . $filename;
                 $leave1->save();
             }
-            return response()->json(['code' => 200, 'message' => 'Successfully..'], 200);
+            return Helper::success('Leave atteched');
         } catch (Exception $e) {
-            return response()->json(['code' => 500, 'message' => 'Error'], 500);
+            return Helper::catch ();
         }
     }
 }
