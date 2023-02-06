@@ -8,6 +8,7 @@ use App\Models\Leave_attechements;
 use TheSeer\Tokenizer\Exception;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
 
@@ -49,7 +50,7 @@ class emergencyleaveController extends Controller
             $leave->save();
 
             $encrypted = Crypt::encryptString($leave->id);
-            return Helper::success('Insert Data');
+            return Helper::success('Insert Data', $encrypted);
         } catch (Exception $e) {
             return Helper::catch ();
         }
@@ -92,9 +93,44 @@ class emergencyleaveController extends Controller
                 $leave1->upload_document = $url . $filename;
                 $leave1->save();
             }
-            return Helper::success('Leave atteched');
+            return Helper::success('Leave atteched', '');
         } catch (Exception $e) {
             return Helper::catch ();
+        }
+    }
+    public function get_leave($id)
+    {
+        try {
+            $userleave = DB::table('emergencyleaves')->select('emergencyleaves.*', 'register_users.first_name', 'register_users.last_name')
+                ->join('register_users', 'register_users.id', '=', 'emergencyleaves.register_user_id')
+                ->where('emergencyleaves.id', $id)->first();
+
+            if ($userleave) {
+                return Helper::success('Get Data', $userleave);
+            } else {
+                return Helper::error('Not Get Data');
+            }
+        } catch (Exception $e) {
+            return response()->json(['code' => 500, 'message' => 'Error'], 500);
+        }
+    }
+    public function all_user($register_user_id)
+    {
+        try {
+            $userleave = DB::table('emergencyleaves')->select('emergencyleaves.*', 'register_users.first_name', 'register_users.last_name')
+                ->join('register_users', 'register_users.id', '=', 'emergencyleaves.register_user_id')
+                ->where('emergencyleaves.register_user_id', $register_user_id)
+                ->get();
+                
+            $query = Emergencyleave::where('register_user_id', $register_user_id)->first();
+
+            if ($query) {
+                return Helper::success('Get Data', $userleave);
+            } else {
+                return Helper::error('Not Get Data');
+            }
+        } catch (Exception $e) {
+            return response()->json(['code' => 500, 'message' => 'Error'], 500);
         }
     }
 }

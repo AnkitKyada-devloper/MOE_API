@@ -32,7 +32,7 @@ class loginController extends Controller
                 ];
 
                 Mail::to($data['email'])->send(new sendmail($maildetails));
-                return Helper::success('Send Mail');
+                return Helper::success('Send Pin','');
             } else {
                 return Helper::error('Mail is Incorrect');
             }
@@ -89,7 +89,7 @@ class loginController extends Controller
             $table->secret_key = $request->secret_key;
             $table->is_twostep_active = $request->is_twostep_active;
             $table->save();
-            return Helper::success('Update data');
+            return Helper::success('Update data','');
         } catch (Exception $e) {
             return Helper::catch();
         }

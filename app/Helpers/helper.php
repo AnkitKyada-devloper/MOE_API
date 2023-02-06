@@ -2,9 +2,9 @@
 namespace App\Helpers;
 
 class Helper{
-    public static function success($message)
+    public static function success($message,$user)
     {
-        return response()->json(['code' => 200,'message' => 'Successfully !..'.$message], 200);
+        return response()->json(['code' => 200,'message' => 'Successfully !..'.$message,'info'=>$user], 200);
     }
     public static function validated($validated)
     {

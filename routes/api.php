@@ -28,9 +28,12 @@ Route::post('updatedetailes/{id}',[loginController::class,'update']);
 Route::post('requestloginlink',[loginlinkController::class,'requestlink']);
 Route::post('verifyloginlink',[loginlinkController::class,'verifylink']);
 
+
 Route::group(['middleware' => 'emergencyleave'],function(){
 Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
 Route::post('upload_document',[emergencyleaveController::class,'Leave_attechements']);  
+Route::get('get_user_leave/{id}',[emergencyleaveController::class,'get_leave']);
+Route::get('all_user_leave/{id}',[emergencyleaveController::class,'all_user']);
 });
 
 

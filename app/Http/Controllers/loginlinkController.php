@@ -42,7 +42,7 @@ class loginlinkController extends Controller
                     'body' => 'Dear User,Please click he below link :' . $url
                 ];
                 Mail::to($request->email)->send(new sendmail($maildetails));
-                return Helper::success('Send mail link');
+                return Helper::success('Send mail link','');
             } else {
                 return Helper::error('Mail is Incorrect');
             }
