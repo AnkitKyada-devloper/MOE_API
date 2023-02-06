@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use TheSeer\Tokenizer\Exception;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 
 
@@ -66,7 +68,7 @@ class loginController extends Controller
                     return response()->json([
                         'message' => 'email&password  is correct ',
                         'code' => 200,
-                        'user' => $user->id,
+                        'user' => Crypt::encryptString($user->id),
                         'is_twostep_active' => $is_twostep_active,
                         'secret_key' => $secret_key,
                         'access_token' => $tokenResult->accessToken

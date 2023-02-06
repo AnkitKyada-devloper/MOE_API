@@ -98,31 +98,35 @@ class emergencyleaveController extends Controller
             return Helper::catch ();
         }
     }
-    public function get_leave($id)
-    {
-        try {
-            $userleave = DB::table('emergencyleaves')->select('emergencyleaves.*', 'register_users.first_name', 'register_users.last_name')
-                ->join('register_users', 'register_users.id', '=', 'emergencyleaves.register_user_id')
-                ->where('emergencyleaves.id', $id)->first();
+    // public function get_leave(Request $request)
+    // {
+    //     try {
+    //         $id = $request->id;
+    //         $decrypted = Crypt::decryptString($id);
+    //         $userleave = DB::table('emergencyleaves')->select('emergencyleaves.*', 'register_users.first_name', 'register_users.last_name')
+    //             ->join('register_users', 'register_users.id', '=', 'emergencyleaves.register_user_id')
+    //             ->where('emergencyleaves.id', $decrypted)->first();
 
-            if ($userleave) {
-                return Helper::success('Get Data', $userleave);
-            } else {
-                return Helper::error('Not Get Data');
-            }
-        } catch (Exception $e) {
-            return response()->json(['code' => 500, 'message' => 'Error'], 500);
-        }
-    }
-    public function all_user($register_user_id)
+    //         if ($userleave) {
+    //             return Helper::success('Get Data', $userleave);
+    //         } else {
+    //             return Helper::error('Not Get Data');
+    //         }
+    //     } catch (Exception $e) {
+    //         return response()->json(['code' => 500, 'message' => 'Error'], 500);
+    //     }
+    // }
+    public function all_user(Request $request)
     {
         try {
+            $user_id = $request->id;
+            $decrypted_id = Crypt::decryptString($user_id);
             $userleave = DB::table('emergencyleaves')->select('emergencyleaves.*', 'register_users.first_name', 'register_users.last_name')
                 ->join('register_users', 'register_users.id', '=', 'emergencyleaves.register_user_id')
-                ->where('emergencyleaves.register_user_id', $register_user_id)
+                ->where('emergencyleaves.register_user_id', $decrypted_id)
                 ->get();
                 
-            $query = Emergencyleave::where('register_user_id', $register_user_id)->first();
+            $query = Emergencyleave::where('register_user_id', $decrypted_id)->first();
 
             if ($query) {
                 return Helper::success('Get Data', $userleave);
