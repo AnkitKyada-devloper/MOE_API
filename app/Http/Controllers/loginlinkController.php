@@ -27,7 +27,7 @@ class loginlinkController extends Controller
                 ]
             );
             if ($validated->fails()) {
-                return Helper::validated($validated); 
+                return Helper::validated($validated);
             }
 
             $mail_link = Str::random(100);
@@ -42,21 +42,20 @@ class loginlinkController extends Controller
                     'body' => 'Dear User,Please click he below link :' . $url
                 ];
                 Mail::to($request->email)->send(new sendmail($maildetails));
-                return Helper::success('Send mail link','');
+                return Helper::success('Send mail link', '');
             } else {
                 return Helper::error('Mail is Incorrect');
             }
         } catch (Exception $e) {
-            return Helper::catch();
+            return Helper::catch ();
         }
 
     }
     public function verifylink(Request $request)
     {
         try {
-             $datas = Login::select('is_twostep_active', 'secret_key')->where('email', '=', $request->email)->get();
-            foreach($datas as $data)
-            {
+            $datas = Login::select('is_twostep_active', 'secret_key')->where('email', '=', $request->email)->get();
+            foreach ($datas as $data) {
                 $is_twostep_active = $data['is_twostep_active'];
                 $secret_key = $data['secret_key'];
             }
@@ -82,8 +81,8 @@ class loginlinkController extends Controller
             } else {
                 return Helper::error('Link can not be null');
             }
-        }catch (Exception $e) {
-            return Helper::catch();
+        } catch (Exception $e) {
+            return Helper::catch ();
         }
 
     }

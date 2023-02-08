@@ -34,12 +34,12 @@ class loginController extends Controller
                 ];
 
                 Mail::to($data['email'])->send(new sendmail($maildetails));
-                return Helper::success('Send Pin','');
+                return Helper::success('Send Pin');
             } else {
                 return Helper::error('Mail is Incorrect');
             }
         } catch (Exception $e) {
-            return Helper::catch();
+            return Helper::catch ();
         }
     }
     public function verifypin(Request $request)
@@ -72,7 +72,7 @@ class loginController extends Controller
                         'is_twostep_active' => $is_twostep_active,
                         'secret_key' => $secret_key,
                         'access_token' => $tokenResult->accessToken
-                        
+
                     ]);
                 } else {
                     return Helper::error('Check your email & pin');
@@ -81,7 +81,7 @@ class loginController extends Controller
                 return Helper::error('Pin Expired');
             }
         } catch (Exception $e) {
-            return Helper::catch();
+            return Helper::catch ();
         }
     }
     public function update(Request $request, $id)
@@ -91,9 +91,20 @@ class loginController extends Controller
             $table->secret_key = $request->secret_key;
             $table->is_twostep_active = $request->is_twostep_active;
             $table->save();
-            return Helper::success('Update data','');
+            return Helper::success('Update data', '');
         } catch (Exception $e) {
-            return Helper::catch();
+            return Helper::catch ();
         }
     }
+    public function logout_user()
+    {
+        try {
+            Auth::user()->token()->revoke();
+            return Helper::logout('logged Out');
+        } catch (Exception $e) {
+            return Helper::catch ();
+        }
+    }
+
+
 }

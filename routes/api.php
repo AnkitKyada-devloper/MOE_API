@@ -24,16 +24,15 @@ use App\Http\Controllers\emergencyleaveController;
 */
 Route::post('requestlogin',[loginController::class,'requestpin']);
 Route::post('verifylogin',[loginController::class,'verifypin']);
-Route::post('updatedetailes/{id}',[loginController::class,'update']);
 Route::post('requestloginlink',[loginlinkController::class,'requestlink']);
 Route::post('verifyloginlink',[loginlinkController::class,'verifylink']);
-
 
 Route::group(['middleware' => 'emergencyleave'],function(){
 Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
 Route::post('upload_document',[emergencyleaveController::class,'Leave_attechements']);  
 Route::post('get_user_leave',[emergencyleaveController::class,'get_leave']);
-// Route::post('all_user_leave',[emergencyleaveController::class,'all_user']);
+Route::post('updatedetailes/{id}',[loginController::class,'update']);
+Route::post('logout',[loginController::class,'logout_user']);
 });
 
 

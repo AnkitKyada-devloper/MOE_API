@@ -2,9 +2,9 @@
 namespace App\Helpers;
 
 class Helper{
-    public static function success($message,$user)
+    public static function success($message,$userdata=null)
     {
-        return response()->json(['code' => 200,'message' => 'Successfully !..'.$message,'data'=>$user], 200);
+        return response()->json(['code' => 200,'message' => 'Successfully !..'.$message,'data'=>$userdata], 200);
     }
     public static function validated($validated)
     {
@@ -18,5 +18,9 @@ class Helper{
     public static function error($message)
     {
         return response()->json(['code' => 404,'message' => 'Error !..'.$message], 404);
+    }
+    public static function logout($message)
+    {
+        return response()->json(['code' => 200,'message' => 'Successfully !..'.$message], 200);
     }
 }
