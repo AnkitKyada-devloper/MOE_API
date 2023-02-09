@@ -5,7 +5,8 @@ use App\Helpers\Helper;
 
 use App\Models\Login;
 use App\Mail\sendmail;
-// use App\Models\loginlink;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use TheSeer\Tokenizer\Exception;
@@ -31,18 +32,20 @@ class loginlinkController extends Controller
             }
 
             $mail_link = Str::random(100);
-            $user = Login::where('email', $request->email)->first();
+            $pin_expires_time = Carbon::now()->addSeconds(300);
+            $user = Login::where('email', $request->email)->update(['mail_link' => $mail_link, 'pin_expires_time' => $pin_expires_time]);
 
             if ($user) {
-                $user->update(['mail_link' => $mail_link]);
+
                 $url = "https://kalptestfin.page.link/?link=https://interns.openeyes.com?PARAMETER=$mail_link&apn=com.oess.moe.moe&isi=12345533&ibi=com.oess.moe.moe&ifl=https://github.com/spideyonhigh";
 
                 $maildetails = [
                     'Subject' => 'Verify Your Login',
                     'body' => 'Dear User,Please click he below link :' . $url
                 ];
+
                 Mail::to($request->email)->send(new sendmail($maildetails));
-                return Helper::success('Send mail link', '');
+                return Helper::success('Send mail link');
             } else {
                 return Helper::error('Mail is Incorrect');
             }
@@ -54,15 +57,23 @@ class loginlinkController extends Controller
     public function verifylink(Request $request)
     {
         try {
-            $datas = Login::select('is_twostep_active', 'secret_key')->where('email', '=', $request->email)->get();
-            foreach ($datas as $data) {
-                $is_twostep_active = $data['is_twostep_active'];
-                $secret_key = $data['secret_key'];
-            }
+            $carbon = Carbon::now();
+            $time = Login::where('email', '=', $request->email)->where('pin_expires_time', '>', $carbon)->first();
+            
+            if ($time) {
 
-            $mail_link = $request->mail_link;
-            if ($mail_link != null) {
-                $userlink = Login::where('email', '=', $request->email)->where('mail_link', '=', $request->mail_link)->first();
+                $mail_link = $request->mail_link;
+                if ($mail_link != null) {
+                    $userlink = Login::where('email', '=', $request->email)->where('mail_link', '=', $request->mail_link)->first();
+                } else {
+                    return Helper::error('mail & link can not be null');
+                }
+
+                $datas = Login::select('is_twostep_active', 'secret_key')->where('email', '=', $request->email)->get();
+                foreach ($datas as $data) {
+                    $is_twostep_active = $data['is_twostep_active'];
+                    $secret_key = $data['secret_key'];
+                }
 
                 if ($userlink) {
                     $userlink->update(['mail_link' => null]);
@@ -72,6 +83,7 @@ class loginlinkController extends Controller
                         'message' => 'email is correct ',
                         'is_twostep_active' => $is_twostep_active,
                         'secret_key' => $secret_key,
+                        'user_id' => Crypt::encryptString($userlink->id),
                         'access_token' => $tokenResult->accessToken
                     ]);
 
@@ -79,7 +91,7 @@ class loginlinkController extends Controller
                     return Helper::error('Mail is Incorrect');
                 }
             } else {
-                return Helper::error('Link can not be null');
+                return Helper::error('Link null or Expired');
             }
         } catch (Exception $e) {
             return Helper::catch ();

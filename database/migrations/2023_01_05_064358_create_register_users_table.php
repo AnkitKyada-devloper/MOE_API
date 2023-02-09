@@ -24,7 +24,7 @@ class CreateRegisterUsersTable extends Migration
             $table->string('gender');
             $table->string('user_role',100);
             $table->integer('pin');
-            $table->string('mail_link',255);
+            $table->string('mail_token',255);
             $table->string('secret_key',250)->default(0);
             $table->tinyInteger('is_twostep_active')->default(0);
             $table->timestamp('pin_expires_time');

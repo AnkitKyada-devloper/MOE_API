@@ -26,13 +26,16 @@ Route::post('requestlogin',[loginController::class,'requestpin']);
 Route::post('verifylogin',[loginController::class,'verifypin']);
 Route::post('requestloginlink',[loginlinkController::class,'requestlink']);
 Route::post('verifyloginlink',[loginlinkController::class,'verifylink']);
+Route::post('user_profile',[loginController::class,'profileData']);
+
+
 
 Route::group(['middleware' => 'emergencyleave'],function(){
 Route::post('emergencyleave',[emergencyleaveController::class,'leave']);
-Route::post('upload_document',[emergencyleaveController::class,'Leave_attechements']);  
-Route::post('get_user_leave',[emergencyleaveController::class,'get_leave']);
-Route::post('updatedetailes/{id}',[loginController::class,'update']);
-Route::post('logout',[loginController::class,'logout_user']);
+Route::post('upload_document',[emergencyleaveController::class,'leaveAttechements']);  
+Route::post('get_user_leave',[emergencyleaveController::class,'getLeave']);
+Route::post('updatedetailes',[loginController::class,'update']);
+Route::post('logout',[loginController::class,'logoutUser']);
 });
 
 

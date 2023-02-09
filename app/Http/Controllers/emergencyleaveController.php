@@ -51,12 +51,12 @@ class emergencyleaveController extends Controller
             $leave->save();
             $encrypted = Crypt::encryptString($leave->id);
 
-            return Helper::success('Insert Leave', $encrypted);
+            return Helper::successData('Insert Leave', $encrypted);
         } catch (Exception $e) {
             return Helper::catch ();
         }
     }
-    public function Leave_attechements(Request $request)
+    public function leaveAttechements(Request $request)
     {
         try {
             $validated = Validator::make($request->all(), [
@@ -69,6 +69,7 @@ class emergencyleaveController extends Controller
             if ($validated->fails()) {
                 return Helper::validated($validated);
             }
+
 
             $upload_document = [];
             $files = $request->upload_document;
@@ -94,25 +95,26 @@ class emergencyleaveController extends Controller
                 $leave1->upload_document = $url . $filename;
                 $leave1->save();
             }
-            return Helper::success('Leave atteched', '');
+            return Helper::success('Leave atteched');
         } catch (Exception $e) {
             return Helper::catch ();
         }
     }
-    public function get_leave(Request $request)
+    public function getLeave(Request $request)
     {
         try {
             $user_id = $request->id;
             $decrypted_id = Crypt::decryptString($user_id);
-            $userleave = DB::table('emergencyleaves')->select('emergencyleaves.*', 'register_users.first_name', 'register_users.last_name')
+            $userleave = DB::table('emergencyleaves')->select('register_users.first_name', 'register_users.last_name', 'emergencyleaves.*')
                 ->join('register_users', 'register_users.id', '=', 'emergencyleaves.register_user_id')
                 ->where('emergencyleaves.register_user_id', $decrypted_id)
+                ->orderBy('id','DESC')
                 ->get();
 
             $query = Emergencyleave::where('register_user_id', $decrypted_id)->first();
 
             if ($query) {
-                return Helper::success('Get Data', $userleave);
+                return Helper::successData('Get Data', $userleave);
             } else {
                 return Helper::error('Data not found');
             }
@@ -120,5 +122,7 @@ class emergencyleaveController extends Controller
             return response()->json(['code' => 500, 'message' => 'Error'], 500);
         }
     }
-   
+    
+    
+
 }

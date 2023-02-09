@@ -66,13 +66,12 @@ class loginController extends Controller
                     $verify = Login::where('email', '=', $request->email)->update(['pin' => null]);
                     $tokenResult = $user->createToken('Access Token');
                     return response()->json([
-                        'message' => 'email&password  is correct ',
+                        'message' => 'email&pin  is correct ',
                         'code' => 200,
-                        'user' => Crypt::encryptString($user->id),
                         'is_twostep_active' => $is_twostep_active,
                         'secret_key' => $secret_key,
+                        'user_id' => Crypt::encryptString($user->id),
                         'access_token' => $tokenResult->accessToken
-
                     ]);
                 } else {
                     return Helper::error('Check your email & pin');
@@ -84,19 +83,33 @@ class loginController extends Controller
             return Helper::catch ();
         }
     }
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         try {
-            $table = Login::find($id);
+            $user_id = $request->id;
+            $decrypted_id = Crypt::decryptString($user_id);
+           
+            $table = Login::findOrFail($decrypted_id);
             $table->secret_key = $request->secret_key;
             $table->is_twostep_active = $request->is_twostep_active;
             $table->save();
-            return Helper::success('Update data', '');
+            return Helper::success('Update data');
         } catch (Exception $e) {
             return Helper::catch ();
         }
     }
-    public function logout_user()
+    public function profileData(Request $request)
+    {
+        try {
+            $profile = Login::select('first_name', 'middle_name', 'last_name', 'email', 'phone_number', 'gender', 'user_role', 'is_twostep_active', 'secret_key')->where('email', $request->email)->first();
+            $user_data = ($profile) ? Helper::successData('', $profile) : Helper::error('Email is incorrect');
+            return $user_data;
+
+        } catch (Exception $e) {
+            return response()->json(['code' => 500, 'message' => 'Error'], 500);
+        }
+    }
+    public function logoutUser()
     {
         try {
             Auth::user()->token()->revoke();
