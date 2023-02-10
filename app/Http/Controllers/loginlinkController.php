@@ -35,16 +35,22 @@ class loginlinkController extends Controller
             $pin_expires_time = Carbon::now()->addSeconds(300);
             $user = Login::where('email', $request->email)->update(['mail_link' => $mail_link, 'pin_expires_time' => $pin_expires_time]);
 
+            $fetchname = Login::select("first_name")->where('email', '=', $request->email)->first();
+            $data1 = json_decode($fetchname);
+            $f_name = $data1->{'first_name'};
+
             if ($user) {
 
                 $url = "https://kalptestfin.page.link/?link=https://interns.openeyes.com?PARAMETER=$mail_link&apn=com.oess.moe.moe&isi=12345533&ibi=com.oess.moe.moe&ifl=https://github.com/spideyonhigh";
 
                 $maildetails = [
                     'Subject' => 'Verify Your Login',
-                    'body' => 'Dear User,Please click he below link :' . $url
+                    'username' => $f_name,
+                    'body' => $url
                 ];
+                $securitycode = "emaillink";
 
-                Mail::to($request->email)->send(new sendmail($maildetails));
+                Mail::to($request->email)->send(new sendmail($maildetails, $securitycode));
                 return Helper::success('Send mail link');
             } else {
                 return Helper::error('Mail is Incorrect');
@@ -59,7 +65,7 @@ class loginlinkController extends Controller
         try {
             $carbon = Carbon::now();
             $time = Login::where('email', '=', $request->email)->where('pin_expires_time', '>', $carbon)->first();
-            
+
             if ($time) {
 
                 $mail_link = $request->mail_link;

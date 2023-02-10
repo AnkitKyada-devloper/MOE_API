@@ -7,6 +7,7 @@ use App\Mail\sendmail;
 use App\Models\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use TheSeer\Tokenizer\Exception;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
@@ -27,13 +28,19 @@ class loginController extends Controller
                 'email' => $request->email
             );
 
+            $fetchname = Login::select("first_name")->where('email', '=', $request->email)->first();
+            $data1 = json_decode($fetchname);
+            $f_name = $data1->{'first_name'};
+
             if ($device) {
                 $maildetails = [
                     'Subject' => 'Verify Your Login',
-                    'body' => 'Dear User,Your Required pin :' . $pin
+                    'username' => $f_name,
+                    'body' => $pin
                 ];
+                $securitycode = "pin";
 
-                Mail::to($data['email'])->send(new sendmail($maildetails));
+                Mail::to($data['email'])->send(new sendmail($maildetails, $securitycode));
                 return Helper::success('Send Pin');
             } else {
                 return Helper::error('Mail is Incorrect');
@@ -88,7 +95,7 @@ class loginController extends Controller
         try {
             $user_id = $request->id;
             $decrypted_id = Crypt::decryptString($user_id);
-           
+
             $table = Login::findOrFail($decrypted_id);
             $table->secret_key = $request->secret_key;
             $table->is_twostep_active = $request->is_twostep_active;

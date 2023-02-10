@@ -105,7 +105,7 @@ class emergencyleaveController extends Controller
         try {
             $user_id = $request->id;
             $decrypted_id = Crypt::decryptString($user_id);
-            $userleave = DB::table('emergencyleaves')->select('register_users.first_name', 'register_users.last_name', 'emergencyleaves.*')
+            $userleave = DB::table('emergencyleaves')->select('emergencyleaves.id','register_users.first_name', 'register_users.last_name', 'emergencyleaves.*')
                 ->join('register_users', 'register_users.id', '=', 'emergencyleaves.register_user_id')
                 ->where('emergencyleaves.register_user_id', $decrypted_id)
                 ->orderBy('id','DESC')
