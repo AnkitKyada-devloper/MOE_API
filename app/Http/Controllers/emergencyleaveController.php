@@ -39,7 +39,7 @@ class emergencyleaveController extends Controller
             }
 
             $leave = new Emergencyleave;
-            $leave->register_user_id = 1;
+            $leave->register_user_id = Auth::user()->id;
             $leave->leave_type_id = $request->leave_type_id; //6<-Emergencyid
             $leave->reason = $request->reason;
             $leave->fromDate1 = $request->fromDate1;

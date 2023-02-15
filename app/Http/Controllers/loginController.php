@@ -95,7 +95,7 @@ class loginController extends Controller
         try {
             $user_id = $request->id;
             $decrypted_id = Crypt::decryptString($user_id);
-
+           
             $table = Login::findOrFail($decrypted_id);
             $table->secret_key = $request->secret_key;
             $table->is_twostep_active = $request->is_twostep_active;
